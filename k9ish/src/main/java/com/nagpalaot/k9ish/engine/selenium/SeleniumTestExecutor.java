@@ -71,7 +71,8 @@ public class SeleniumTestExecutor extends BaseTestExecutor {
 		ChromeOptions options = new ChromeOptions();
 		// had to set the specific chrome version I want to use 
 		// because Selenium Manager keeps trying to use Chrome version 151 by default.
-		// Version 151 was only released mid-July 2026.
+		// Version 151 was only released mid-July 2026 and I am not going to install 
+		// it just to be able to test with Selenium.
 		options.setBrowserVersion("149");
 		if(chromeHeadless) {
 			options.addArguments("--headless=new");
@@ -91,6 +92,9 @@ public class SeleniumTestExecutor extends BaseTestExecutor {
 		// Listen for response received events
         devTools.addListener(Network.responseReceived(), response -> {
         	if(getTestUrl()!= null && !getTestUrl().isBlank()) {
+        		// multiple listeners will be created, because the page is created from multiple pieces, 
+        		// e.g. css files, js files, etc.
+        		// only want the data from the actual page being tested
         		if(response.getResponse().getUrl().equalsIgnoreCase(getTestUrl())) {
         			System.out.println("Pass headers for testUrl " + getTestUrl());
         			setHeaders(response.getResponse().getHeaders());
@@ -145,11 +149,14 @@ public class SeleniumTestExecutor extends BaseTestExecutor {
 	protected void handleAssertPresentHeaderCommand(String target, String expectedValue) {
 		System.out.println("Check headers " + headers);
 		if(headers == null || !headers.containsKey(target)){
+			System.out.println("Header not found.");
 			setSuccessful(false);
 		}
 		else {
 			String actualValue = (String) headers.get(target);
-			if(!expectedValue.equalsIgnoreCase(actualValue)) {
+			System.out.println("Compare expected value: " + expectedValue + " with actual value: " + actualValue);
+			if(!expectedValue.equalsIgnoreCase(actualValue.toLowerCase())) {
+				System.out.println("Expected value not found");
 				setSuccessful(false);
 			}
 		}

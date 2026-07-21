@@ -47,6 +47,7 @@ public abstract class TestExecutor {
 		for(TestStep step : script.getTestSteps()) {
 			if(isSuccessful()) {
 				String command = step.getCommand().trim();
+				System.out.println("Step: " + step.getStepIdx() + ", command: " + command + ", target: " + step.getTarget() + ", expected value: " + step.getValue());
 				switch(command) {
 				case "open":{
 					handleOpenCommand(baseUrl + step.getTarget());
@@ -69,6 +70,11 @@ public abstract class TestExecutor {
 					break;
 				}
 				}
+			}
+			if(isSuccessful()) {
+				System.out.println("Step " + step.getStepIdx() + " passed.\n");
+			} else {
+				System.out.println("Step " + step.getStepIdx() + " failed.\n");
 			}
 			
 		}
