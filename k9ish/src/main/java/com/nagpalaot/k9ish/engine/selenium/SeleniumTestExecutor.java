@@ -69,6 +69,9 @@ public class SeleniumTestExecutor extends BaseTestExecutor {
 	@Override
 	public void initialize() throws Exception {
 		ChromeOptions options = new ChromeOptions();
+		// had to set the specific chrome version I want to use 
+		// because Selenium Manager keeps trying to use Chrome version 151 by default.
+		// Version 151 was only released mid-July 2026.
 		options.setBrowserVersion("149");
 		if(chromeHeadless) {
 			options.addArguments("--headless=new");
@@ -113,12 +116,31 @@ public class SeleniumTestExecutor extends BaseTestExecutor {
 
 	@Override
 	protected void handleAssertPresentCommand(String target, String expectedValue) {
-		WebElement element = driver.findElement(locatorForTarget(target));
-		if(!commonAssertContain(element, target, expectedValue)) {
-			setSuccessful(false);
+		/*
+		 * repurposing the method to also be able to process looking for a header, 
+		 * maybe a cookie later, along with processing looking for a regular element.
+		 */
+		if(target.startsWith(HEADER)) {
+			System.out.println("Find a header check");
+			String headerTarget = target.split(EQUALS)[1];
+			handleAssertPresentHeaderCommand(headerTarget, expectedValue);
+		}
+		else {
+			System.out.println("Find a regular element check");
+			WebElement element = driver.findElement(locatorForTarget(target));
+			if(!commonAssertContain(element, target, expectedValue)) {
+				setSuccessful(false);
+			}
 		}
 	}
 	
+	/**
+	 * Better solution is to add a new command using this method to specifically 
+	 * check for headers.  It requires a listener which puts the headers info 
+	 * into the headers variable.
+	 * This also requires use of Selenium DevTools which works best with Chromium 
+	 * based browsers (and associated webdrivers) but should also work with RemoteWebDriver.
+	 */
 	@Override
 	protected void handleAssertPresentHeaderCommand(String target, String expectedValue) {
 		System.out.println("Check headers " + headers);
