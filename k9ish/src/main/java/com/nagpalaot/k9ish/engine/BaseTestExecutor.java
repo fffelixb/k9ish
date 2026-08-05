@@ -23,7 +23,7 @@ public class BaseTestExecutor extends TestExecutor {
 	}
 
 	@Override
-	protected void handleAssertPresentCookieCommand(String target, String expectedValue) {
+	protected void handleAssertCookiePresentCommand(String target, String expectedValue) {
 		
 	}
 

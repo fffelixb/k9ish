@@ -20,7 +20,7 @@ public abstract class TestExecutor {
 	
 	protected abstract void handleAssertPresentCommand(String target, String expectedValue);
 	
-	protected abstract void handleAssertPresentCookieCommand(String target, String expectedValue);
+	protected abstract void handleAssertCookiePresentCommand(String target, String expectedValue);
 
 	protected abstract void handleAssertPresentHeaderCommand(String target, String expectedValue);
 
@@ -57,8 +57,8 @@ public abstract class TestExecutor {
 					handleAssertPresentCommand(step.getTarget(), step.getValue());
 					break;
 				}
-				case "assertPresentCookie":{
-					handleAssertPresentCookieCommand(step.getTarget(), step.getValue());
+				case "assertCookiePresent":{
+					handleAssertCookiePresentCommand(step.getTarget(), step.getValue());
 					break;
 				}
 				case "assertPresentHeader":{

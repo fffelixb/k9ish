@@ -1,14 +1,18 @@
 package com.nagpalaot.k9ish.engine.selenium;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.bidi.module.Network;
+//import org.openqa.selenium.bidi.network.Cookie;
 import org.openqa.selenium.bidi.network.Header;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -88,18 +92,46 @@ public class SeleniumBiDiTestExecutor extends BaseTestExecutor {
 		//network.addIntercept(new AddInterceptParameters(InterceptPhase.RESPONSE_STARTED));
 		
 		network.onResponseCompleted(responseReceived -> {
-			System.out.println("---------------------");
-			System.out.println(responseReceived.getRequest().getUrl() + " : " + this.getTestUrl());
-			System.out.println("---------------------");
+			//System.out.println("---------------------");
+			//System.out.println(responseReceived.getRequest().getUrl() + " : " + this.getTestUrl());
+			//System.out.println("---------------------");
 			if(responseReceived.getRequest().getUrl().equalsIgnoreCase(this.getTestUrl())) {
 				List<Header> headers = responseReceived.getResponseData().getHeaders();
 				Map<String, String> headerMap = getHeaderMap(headers);
 				System.out.println(headerMap);
+				Set<Cookie> cookies = driver.manage().getCookies();//responseReceived.getRequest().getCookies();
+				//List<String> cookies = getCookies(headers);
+				System.out.println(cookies);
+				printCookies(cookies);
 			}
 			
 		});
 		
         setSuccessful(true);
+	}
+	
+	private void printCookies(Set<Cookie> cookies) {
+		for(Cookie cookie : cookies) {
+			System.out.println("Cookie name: " + cookie.getName());
+			System.out.println("Value: " + cookie.getValue());
+			System.out.println("Domain: " + cookie.getDomain());
+			System.out.println("Path: " + cookie.getPath());
+			System.out.println("Samesite: " + cookie.getSameSite());
+			System.out.println("Expiration: " + cookie.getExpiry());
+			System.out.println("HTTPOnly: " + cookie.isHttpOnly());
+			System.out.println("Secure: " + cookie.isSecure());
+			System.out.println("Cookie: " + cookie.toString() + "\n") ;
+		}
+	}
+	
+	protected List<String> getCookies(List<Header> headerList){
+		List<String> result = new ArrayList<String>();
+		for(Header header : headerList) {
+			if(header.getName().equalsIgnoreCase("Set-Cookie")) {
+				result.add(header.getValue().getValue());
+			}
+		}
+		return result;
 	}
 	
 	protected Map<String, String> getHeaderMap(List<Header> headerList){

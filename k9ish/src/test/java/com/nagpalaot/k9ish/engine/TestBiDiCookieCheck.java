@@ -11,13 +11,14 @@ import com.nagpalaot.k9ish.dashboard.model.TestScript;
 import com.nagpalaot.k9ish.dashboard.model.TestStep;
 import com.nagpalaot.k9ish.engine.selenium.SeleniumBiDiTestExecutor;
 
-public class TestBiDiHeaderCheck {
+public class TestBiDiCookieCheck {
 
 	private TestExecutor executor;
 	
 	@Test
 	public void checkHeader() throws Exception {
 		executor = new SeleniumBiDiTestExecutor();
+		executor.setBaseUrl("https://ecdrappeals.ed.gov");
 		executor.initialize();
 		TestScript script = prepareTestScript();
 		boolean result = executor.execute(script);
